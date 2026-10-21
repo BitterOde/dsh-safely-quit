@@ -1,0 +1,21 @@
+# dsh-safely-quit bundle patch：把插件行插入 web profile 的花名册。
+#
+# 本文件由 package.json 的 dsh.bundle.patch 声明，作为 profile **bundle 层**自动应用。
+# 走这一层（= 往 profile 的 dsh.profile.bundles 里加一行）**必须重启 dsh web**：bundles 只在启动时读一次。
+# 想免重启看效果，就把下面同一段 `- insert:` 直接写进 profile 的**用户层**
+# `~/.dsh/profiles/web/cordis.patch.yml`（该文件由 profile 的 patchReload: live 监视重载）。
+# 两条路**二选一** —— 同时用会让同一 id 被插两次 ⇒ duplicate loader entry id ⇒ 启动失败。
+#
+# 名字的三层区分（按插件清单的核实结论，别混）：
+#   - 行 id            `safely-quit`      ← 本文件的 `- id:`
+#   - 行 name          `dsh-safely-quit`  ← 本文件的 `name:`；**同时**是浏览器半
+#                                          `window.__ModuleLoader__.load({ id: 'dsh-safely-quit' })` 用的 id
+#                                          （loader 条目名 = 行 name，与包的 main 无关）
+#   - cordis 运行时名   `safely-quit`      ← lib/index.js 的 `export const name`，与上面两个都无关
+#
+# 宿主半（exports "."）跑在 dsh 宿主进程里：**关闭编排 + 待续清单 + 关机拓展服务**（见 lib/index.js 文件头）。
+# 浏览器半由 package.json 的 dsh.client 声明，随页面加载（exports "./client"）。
+
+- insert:
+    - id: safely-quit
+      name: 'dsh-safely-quit'

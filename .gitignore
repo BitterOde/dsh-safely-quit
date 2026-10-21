@@ -1,0 +1,8 @@
+# 依赖与产物
+node_modules/
+
+# 本地临时物
+*.log
+*.tgz
+.DS_Store
+Thumbs.db
